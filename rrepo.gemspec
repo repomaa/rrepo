@@ -25,7 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency 'database_cleaner', '~> 1.4'
 
-  spec.add_dependency 'mongo', '~> 1.12'
-  spec.add_dependency 'bson_ext', '~> 1.12'
   spec.add_dependency 'activesupport', '~> 4.2'
 end

@@ -1,5 +1,4 @@
 require 'rrepo/adapters/base'
-require 'mongo'
 
 module RRepo
   module Adapters
