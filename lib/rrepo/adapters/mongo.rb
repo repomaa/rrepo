@@ -6,7 +6,7 @@ module RRepo
     class Mongo < Base
       def initialize(options)
         db_name = options.delete(:db)
-        @client = ::Mongo::Client.new(options.delete(:host), options)
+        @client = MongoClient.new(options.delete(:host), options)
         @db = @client[db_name]
       end
 

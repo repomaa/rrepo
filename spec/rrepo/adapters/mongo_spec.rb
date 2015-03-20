@@ -20,7 +20,7 @@ module RRepo
         end
       end
       let(:adapter) { Mongo.new(host: 'foo') }
-      before(:each) { stub_const('Mongo::Client', mongo_client) }
+      before(:each) { stub_const('MongoClient', mongo_client) }
 
       describe '.new' do
         it 'creates a mongo client' do
