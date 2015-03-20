@@ -13,10 +13,9 @@ module RRepo
     def initialize(adapter)
       @adapter = adapter
       class_name = self.class.name.demodulize
-      model_class_name = class_name[/.*(?=Repository)/]
-      @collection = model_class_name.underscore.pluralize.to_sym
+      @collection = class_name.underscore.to_sym
       return if class_name == 'Repository'
-      @model_class = model_class_name.constantize
+      @model_class = class_name.singularize.constantize
     end
 
     def create(model)

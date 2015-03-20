@@ -14,9 +14,9 @@ module RRepo
 
     describe '.new' do
       let(:repository) do
-        class TestRepository < Repository
+        class Tests < Repository
         end
-        TestRepository.new(:adapter)
+        Tests.new(:adapter)
       end
 
       it 'sets the collection according to the class name' do
@@ -36,9 +36,9 @@ module RRepo
     let(:persisted_model) { double('model', _id: 'foo') }
 
     let(:repository) do
-      class TestRepository < Repository
+      class Tests < Repository
       end
-      TestRepository.new(adapter)
+      Tests.new(adapter)
     end
 
     describe '#create' do
