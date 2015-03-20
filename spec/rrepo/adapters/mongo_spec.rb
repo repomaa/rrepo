@@ -1,10 +1,14 @@
 require 'spec_helper'
+# Defining this so the Mongo adapter can include it
+module Mongo
+end
 require 'rrepo/adapters/mongo'
 
 module RRepo
   # Specs for mongo adapter
   module Adapters
     describe Mongo do
+      let(:mongo_driver) { Module.new }
       let(:model) { double('model', to_hash: { _id: 1, foo: :bar }) }
       let(:collection) { double('collection') }
       let(:db) { double('db', :[] => collection) }
@@ -20,6 +24,7 @@ module RRepo
         end
       end
       let(:adapter) { Mongo.new(host: 'foo') }
+
       before(:each) { stub_const('MongoClient', mongo_client) }
 
       describe '.new' do
