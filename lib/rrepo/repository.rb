@@ -8,14 +8,28 @@ module RRepo
   class Repository
     include Abstractize
 
+    class << self
+      def collection(collection = nil)
+        return @collection = collection if collection.present?
+        @collection
+      end
+
+      def model_class_name(name = nil)
+        return @model_class_name = name if name.present?
+        @model_class_name
+      end
+    end
+
     attr_reader :collection, :adapter, :model_class
 
     def initialize(adapter)
       @adapter = adapter
       class_name = self.class.name.demodulize
-      @collection = class_name.underscore.to_sym
+      @collection = (self.class.collection || class_name.underscore).to_sym
       return if class_name == 'Repository'
-      @model_class = class_name.singularize.constantize
+      @model_class = (
+        self.class.model_class_name || class_name.singularize
+      ).constantize
     end
 
     def create(model)

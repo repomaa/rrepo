@@ -13,22 +13,78 @@ module RRepo
     end
 
     describe '.new' do
-      let(:repository) do
+      let(:repository_class) do
         class Tests < Repository
         end
-        Tests.new(:adapter)
+        Tests
+      end
+
+      after(:each) do
+        repository_class.instance_variable_set(:@model_class_name, nil)
+        repository_class.instance_variable_set(:@collection, nil)
+      end
+
+      let(:repository) do
+        repository_class.new(:adapter)
       end
 
       it 'sets the collection according to the class name' do
         expect(repository.collection).to eq(:tests)
       end
 
+      it 'sets the collection to what was set with .collection' do
+        repository_class.collection(:foobar)
+        expect(repository.collection).to eq(:foobar)
+      end
+
       it 'sets the model class according to the class name' do
         expect(repository.model_class).to eq(Test)
       end
 
+      it 'sets the model class to what was set with .model_class_name' do
+        stub_const('ModelConst', :foobar)
+        repository_class.model_class_name('ModelConst')
+        expect(repository.model_class).to eq(:foobar)
+      end
+
       it 'requires a database adapter' do
         expect { repository.class.new }.to raise_error(ArgumentError)
+      end
+    end
+
+    describe '.collection' do
+      let(:repository_class) do
+        Class.new(Repository)
+      end
+
+      it 'sets the given collection if passed one' do
+        repository_class.collection(:foobar)
+        expect(repository_class.instance_variable_get(:@collection)).to eq(
+          :foobar
+        )
+      end
+
+      it 'gets the given collection if no collection is passed' do
+        repository_class.instance_variable_set(:@collection, :foobar)
+        expect(repository_class.collection).to eq(:foobar)
+      end
+    end
+
+    describe '.model_class_name' do
+      let(:repository_class) do
+        Class.new(Repository)
+      end
+
+      it 'sets the given collection if passed one' do
+        repository_class.model_class_name(:foobar)
+        expect(
+          repository_class.instance_variable_get(:@model_class_name)
+        ).to eq(:foobar)
+      end
+
+      it 'gets the given collection if no collection is passed' do
+        repository_class.instance_variable_set(:@model_class_name, :foobar)
+        expect(repository_class.model_class_name).to eq(:foobar)
       end
     end
 
