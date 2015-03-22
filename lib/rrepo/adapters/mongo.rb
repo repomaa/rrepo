@@ -37,6 +37,31 @@ module RRepo
         @db[collection].drop
       end
 
+      def query(collection, &block)
+        Query.new(@db[collection], &block)
+      end
+
+      # A Mongo Query object
+      class Query
+        def initialize(collection, &block)
+          @collection = collection
+          @query = {}
+          instance_eval(&block) if block_given?
+        end
+
+        def where(condition)
+          @query.merge(condition)
+        end
+
+        def run
+          @collection.find(@query)
+        end
+
+        def to_hash
+          @query
+        end
+      end
+
       protected
 
       def id_query(id)

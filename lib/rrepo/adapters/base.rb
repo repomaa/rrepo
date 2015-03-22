@@ -15,6 +15,7 @@ module RRepo
       define_abstract_method :all
       define_abstract_method :find
       define_abstract_method :clear
+      define_abstract_method :query
     end
   end
 end

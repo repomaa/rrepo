@@ -66,5 +66,9 @@ module RRepo
     def clear
       adapter.clear(collection)
     end
+
+    def query(&block)
+      adapter.query(collection, &block)
+    end
   end
 end

@@ -78,6 +78,36 @@ module RRepo
           adapter.clear(:test)
         end
       end
+
+      describe '#query' do
+        it 'creates a new query object' do
+          stub_const('RRepo::Adapters::Mongo::Query', double('Query'))
+          expect(Mongo::Query).to receive(:new).with(collection)
+          adapter.query(collection)
+        end
+      end
+
+      describe Mongo::Query do
+        describe '.new' do
+          it 'requires a collection' do
+            expect { Mongo::Query.new }.to raise_error(ArgumentError)
+            Mongo::Query.new(collection)
+          end
+        end
+
+        describe '.run' do
+          let(:query) { Mongo::Query.new(collection) }
+
+          it 'calls find on with the @query instance variable' do
+            collection = double('collection')
+            query_hash = { foo: 'bar' }
+            query.instance_variable_set(:@collection, collection)
+            query.instance_variable_set(:@query, query_hash)
+            expect(collection).to receive(:find).with(query_hash)
+            query.run
+          end
+        end
+      end
     end
   end
 end

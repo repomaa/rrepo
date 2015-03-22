@@ -210,5 +210,22 @@ module RRepo
         repository.clear
       end
     end
+
+    describe '#query' do
+      it 'calls #query on the adapter' do
+        expect(adapter).to receive(:query).with(repository.collection)
+        repository.query
+      end
+
+      it 'yields control' do
+        allow(adapter).to receive(:query).and_yield(:foo)
+        expect { |b| repository.query(&b) }.to yield_with_args(:foo)
+      end
+
+      it 'returns what query returns on the adapter' do
+        allow(adapter).to receive(:query).and_yield(:foo).and_return(:foobar)
+        expect(repository.query { |_| }).to eq(:foobar)
+      end
+    end
   end
 end
