@@ -9,7 +9,7 @@ module RRepo
   module Adapters
     describe Mongo do
       let(:mongo_driver) { Module.new }
-      let(:model) { double('model', to_hash: { _id: 1, foo: :bar }) }
+      let(:model) { double('model', _id: 1, to_hash: { foo: :bar }) }
       let(:collection) { double('collection') }
       let(:db) { double('db', :[] => collection) }
       let(:mongo_client) do
@@ -37,7 +37,7 @@ module RRepo
       end
 
       describe '#create' do
-        let(:model) { double('model', to_hash: { foo: :bar }) }
+        let(:model) { double('model', _id: 1, to_hash: { foo: :bar }) }
         it 'calls insert on the given collection with the attribute hash' do
           expect(collection).to receive(:insert).with(foo: :bar)
           adapter.create(:test, model)

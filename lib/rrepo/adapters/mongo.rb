@@ -17,12 +17,11 @@ module RRepo
 
       def update(collection, model)
         hash = model.to_hash
-        @db[collection.to_s].update(id_query(hash.delete(:_id)), hash)
+        @db[collection.to_s].update(id_query(model._id), hash)
       end
 
       def delete(collection, model)
-        id = model.to_hash[:_id]
-        @db[collection.to_s].remove(id_query(id))
+        @db[collection.to_s].remove(id_query(model._id))
       end
 
       def all(collection)
