@@ -49,7 +49,7 @@ module RRepo
         end
 
         def where(condition)
-          @query.merge(condition)
+          @query.merge!(condition)
         end
 
         def run
