@@ -1,3 +1,3 @@
 module RRepo
-  VERSION = '0.2.3'.freeze
+  VERSION = '0.2.4'.freeze
 end
