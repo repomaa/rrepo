@@ -56,10 +56,11 @@ module RRepo
     end
 
     def find(id = nil, &block)
+      # TODO: rewrite to make this db agnostic
       if block_given?
         result = adapter.query(collection, &block).run.next_document
       else
-        result = adapter.find(collection, id)
+        result = adapter.find(collection, id).next_document
       end
       return if result.blank?
       model_for(result)
