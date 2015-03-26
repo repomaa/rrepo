@@ -100,10 +100,10 @@ module RRepo
 
           it 'calls find on with the @query instance variable' do
             collection = double('collection')
-            query_hash = { foo: 'bar' }
+            query_array = [{ foo: 'bar' }]
             query.instance_variable_set(:@collection, collection)
-            query.instance_variable_set(:@query, query_hash)
-            expect(collection).to receive(:find).with(query_hash)
+            query.instance_variable_set(:@query, query_array)
+            expect(collection).to receive(:find).with(query_array.first)
             query.run
           end
         end

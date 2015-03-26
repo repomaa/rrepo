@@ -44,16 +44,26 @@ module RRepo
       class Query
         def initialize(collection, &block)
           @collection = collection
-          @query = {}
+          @query = [{}]
           instance_eval(&block) if block_given?
         end
 
         def where(condition)
-          @query.merge!(condition)
+          @query.last.merge!(condition)
+          self
+        end
+
+        def or
+          @query << {}
+          self
         end
 
         def run
-          @collection.find(@query)
+          if @query.size > 1
+            @collection.find(:$or => @query)
+          else
+            @collection.find(@query.first)
+          end
         end
 
         def to_hash
