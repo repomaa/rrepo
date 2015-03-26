@@ -55,8 +55,12 @@ module RRepo
       result.map(&method(:model_for))
     end
 
-    def find(id)
-      result = adapter.find(collection, id)
+    def find(id = nil, &block)
+      if block_given?
+        result = adapter.query(collection, &block).run.next_document
+      else
+        result = adapter.find(collection, id)
+      end
       model_for(result)
     end
 
@@ -64,8 +68,15 @@ module RRepo
       adapter.clear(collection)
     end
 
-    def query(&block)
-      adapter.query(collection, &block)
+    def find_all(&block)
+      result = adapter.query(collection, &block).run
+      Enumerator.new do |y|
+        loop do
+          doc = result.next_document
+          break if doc.nil?
+          y << model_for(doc)
+        end
+      end
     end
 
     def model_class(attributes = {})

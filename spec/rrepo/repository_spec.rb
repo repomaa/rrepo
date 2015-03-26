@@ -215,20 +215,28 @@ module RRepo
       end
     end
 
-    describe '#query' do
+    describe '#find_all' do
+      let(:query_result) do
+        result = double('query_result')
+        allow(result).to receive(:each).and_yield(
+          name: 'foo'
+        ).and_yield(
+          name: 'bar'
+        )
+        result
+      end
+      let(:query) { double('query', run: query_result) }
+
       it 'calls #query on the adapter' do
-        expect(adapter).to receive(:query).with(repository.collection)
-        repository.query
+        expect(adapter).to receive(:query).with(
+          repository.collection
+        ).and_return(query)
+        repository.find_all
       end
 
-      it 'yields control' do
-        allow(adapter).to receive(:query).and_yield(:foo)
-        expect { |b| repository.query(&b) }.to yield_with_args(:foo)
-      end
-
-      it 'returns what query returns on the adapter' do
-        allow(adapter).to receive(:query).and_yield(:foo).and_return(:foobar)
-        expect(repository.query { |_| }).to eq(:foobar)
+      it 'returns an enumerator' do
+        allow(adapter).to receive(:query).and_return(query)
+        expect(repository.find_all { |_| }).to be_an(Enumerator)
       end
     end
 
