@@ -14,22 +14,19 @@ module RRepo
         @collection
       end
 
-      def model_class_name(name = nil)
+      def model_class_name(name = nil, &block)
         return @model_class_name = name if name.present?
+        return @model_class_name = block if block_given?
         @model_class_name
       end
     end
 
-    attr_reader :collection, :adapter, :model_class
+    attr_reader :collection, :adapter
 
     def initialize(adapter)
       @adapter = adapter
       class_name = self.class.name.demodulize
       @collection = (self.class.collection || class_name.underscore).to_sym
-      return if class_name == 'Repository'
-      @model_class = (
-        self.class.model_class_name || class_name.singularize
-      ).constantize
     end
 
     def create(model)
@@ -55,12 +52,12 @@ module RRepo
 
     def all
       result = adapter.all(collection)
-      result.map(&model_class.method(:new))
+      result.map(&method(:model_for))
     end
 
     def find(id)
       result = adapter.find(collection, id)
-      model_class.new(result)
+      model_for(result)
     end
 
     def clear
@@ -69,6 +66,21 @@ module RRepo
 
     def query(&block)
       adapter.query(collection, &block)
+    end
+
+    def model_class(attributes = {})
+      if self.class.model_class_name.respond_to?(:call)
+        model_class_name = self.class.model_class_name.call(attributes)
+      else
+        model_class_name = (
+          self.class.model_class_name || self.class.name.demodulize.singularize
+        )
+      end
+      model_class_name.constantize
+    end
+
+    def model_for(attributes)
+      model_class(attributes).new(attributes)
     end
   end
 end

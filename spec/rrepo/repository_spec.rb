@@ -9,7 +9,11 @@ module RRepo
     end
 
     before(:each) do
-      stub_const('Test', Class.new)
+      test_model = Class.new do
+        def initialize(_args)
+        end
+      end
+      stub_const('Test', test_model)
     end
 
     describe '.new' do
@@ -225,6 +229,21 @@ module RRepo
       it 'returns what query returns on the adapter' do
         allow(adapter).to receive(:query).and_yield(:foo).and_return(:foobar)
         expect(repository.query { |_| }).to eq(:foobar)
+      end
+    end
+
+    describe '#model_for' do
+      it 'requires an attributes hash' do
+        expect { repository.model_for }.to raise_error(ArgumentError)
+        repository.model_for({})
+      end
+
+      it 'calls the proc set to model_class_name with the attributes' do
+        proc = double('proc', call: 'Test')
+        expect(proc).to receive(:call).with(_type: 'Test')
+        repository.class.instance_variable_set(:@model_class_name, proc)
+        expect(model_class).to receive(:new).with(_type: 'Test')
+        repository.model_for(_type: 'Test')
       end
     end
   end
