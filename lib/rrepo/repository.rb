@@ -61,6 +61,7 @@ module RRepo
       else
         result = adapter.find(collection, id)
       end
+      return if result.blank?
       model_for(result)
     end
 
