@@ -74,7 +74,8 @@ module RRepo
       protected
 
       def id_query(id)
-        { _id: id }
+        object_id = id.is_a?(BSON::ObjectId) ? id : BSON::ObjectId(id)
+        { _id: object_id }
       end
     end
   end
