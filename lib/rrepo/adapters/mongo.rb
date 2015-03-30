@@ -5,6 +5,9 @@ module RRepo
     # A mongodb adapter
     class Mongo < Base
       include ::Mongo
+
+      attr_reader :db
+
       def initialize(options)
         db_name = options.delete(:db)
         @client = MongoClient.new(options.delete(:host), options)
