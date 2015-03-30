@@ -52,7 +52,13 @@ module RRepo
 
     def all
       result = adapter.all(collection)
-      result.map(&method(:model_for))
+      Enumerator.new do |y|
+        loop do
+          doc = result.next_document
+          break if doc.nil
+          y << model_for(doc)
+        end
+      end
     end
 
     def find(id = nil, &block)
